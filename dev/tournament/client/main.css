@@ -1,0 +1,64 @@
+body {
+  padding: 10px;
+  font-family: sans-serif;
+}
+
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.answerCandidate {
+  padding-right: 30px;
+  padding-left: 30px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 20px;
+  border-color: #C0C0C0;
+}
+
+.answerCandidate:hover {
+  background-color:  #d5f5e3 ;
+}
+
+.selectedCandidate {
+  border-width: 3px ;
+  /*GREY*/
+  /*border-color: #696969;
+  background-color: #D3D3D3;*/
+
+  /*GREEN*/
+  border-color:  #145a32 ;
+  background-color:   #d5f5e3  ;
+
+  /*BLUE*/
+  /*border-color:  #154360;
+  background-color:  #aed6f1 ;*/
+}
+
+.question {
+  padding:20px;
+  font-size: 2em;
+}
+
+.instruction {
+  padding:20px;
+  font-size: 1.5em;
+  border-style: solid;
+  border-color: #ff5733;
+  border-radius: 20px;
+  background-color:  #fad7a0;
+}
+
+.cnt-button {
+  margin-top: 40px;
+  background-color: #408c61 ; /*#208c4e;*/
+}
+
+.cnt-button:hover {
+  background-color: #397a55;
+}
