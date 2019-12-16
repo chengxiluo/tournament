@@ -14,6 +14,7 @@ FlowRouter.route('/Comparison', {
   name: 'Comparison',
   action(params, queryParams) {
     mount(Comparison, {
+      startWithPair: 0,
       answerAID: "iamanswera",
       answerBID: "iamanswerBBB",
       questionText: "I am a test MSMarco question",

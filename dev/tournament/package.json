@@ -11,6 +11,7 @@
     "@babel/runtime": "^7.6.0",
     "meteor-node-stubs": "^1.0.0",
     "react": "^16.9.0",
+    "react-beforeunload": "^2.1.0",
     "react-dom": "^16.9.0",
     "react-mounter": "^1.2.0"
   },

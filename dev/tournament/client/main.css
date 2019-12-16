@@ -3,7 +3,6 @@ body {
   font-family: sans-serif;
 }
 
-
 .red {
   background-color: red;
 }
@@ -47,15 +46,20 @@ body {
 
 .instruction {
   padding:20px;
-  font-size: 1.5em;
+  font-size: 1em;
   border-style: solid;
   border-color: #ff5733;
   border-radius: 20px;
   background-color:  #fad7a0;
 }
 
+.warning {
+  margin-top: 20px;
+  margin-bottom: -20px !important;
+}
+
 .cnt-button {
-  margin-top: 40px;
+  margin-top: 20px;
   background-color: #408c61 ; /*#208c4e;*/
 }
 
