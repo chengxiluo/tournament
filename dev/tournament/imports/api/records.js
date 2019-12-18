@@ -5,6 +5,7 @@ export const Candidates = new Mongo.Collection('candidates');
 export const Topics = new Mongo.Collection('topics');
 export const Pairs = new Mongo.Collection('pairs');
 export const Users = new Mongo.Collection('users');
+export const Judgements = new Mongo.Collection('judgements');
 
 
 if (Meteor.isServer) {
@@ -26,6 +27,11 @@ if (Meteor.isServer) {
   Meteor.publish('users', function(){
     // console.log("publish pairs");
     return Users.find({});
+  });
+
+  Meteor.publish('judgements', function(){
+    // console.log("publish pairs");
+    return Judgements.find({});
   });
 
 }

@@ -20,8 +20,13 @@ body {
   border-color: #C0C0C0;
 }
 
+.notAllowedSasha {
+  cursor: not-allowed;
+}
+
 .answerCandidate:hover {
   background-color:  #d5f5e3 ;
+  cursor: pointer;
 }
 
 .selectedCandidate {
@@ -65,4 +70,8 @@ body {
 
 .cnt-button:hover {
   background-color: #397a55;
+}
+
+.backButton {
+  padding:20px;
 }

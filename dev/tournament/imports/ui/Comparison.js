@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // import {Tasks} from '../api/tasks.js';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Topics, Candidates, Pairs, Users } from '../api/records.js';
+import { Topics, Candidates, Pairs, Users, Judgements } from '../api/records.js';
 // import { useBeforeunload } from 'react-beforeunload';
 // import { InLabExperiments, InLabLogs } from '../api/search_tasks.js';
 // import { dictToURLParams, getNextPage } from '../api/Utilities.js';
@@ -15,6 +15,7 @@ class Comparison extends Component {
     this.loremipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     this.answerSelected = this.answerSelected.bind(this);
     this.onContinueClickHandler = this.onContinueClickHandler.bind(this);
+    this.onBackClickHandler = this.onBackClickHandler.bind(this);
 
     this.state = {
       selectedAnswerID: '',
@@ -49,11 +50,62 @@ class Comparison extends Component {
     // this check is needed, otherwise an infinite loop of rerendering will start
     if (prevProps !== this.props) {
       console.log(this.props.allPairs);
-      this.updateState();
+      this.updateStateNext();
     }
   }
 
-  updateState() {
+  updateStatePrev() {
+    if (this.props.readyTracker) {
+      var currentPair = this.props.allPairs[this.state.displayPairIndex];
+      var oldIndex = this.state.displayPairIndex;
+      console.log("Current index: " + this.state.displayPairIndex);
+      console.log(currentPair);
+
+      var currentTopic = Topics.findOne({'topic': currentPair['topic']});
+      var currentQuestion = currentTopic['question'];
+      var leftAnswer = Candidates.findOne({'docno': currentPair['left']})
+      var rightAnswer = Candidates.findOne({'docno': currentPair['right']})
+
+      if (leftAnswer && rightAnswer) {
+        oldIndex = oldIndex - 1;
+      }
+
+      while (! (leftAnswer && rightAnswer)) {
+        oldIndex = oldIndex - 1;
+        currentPair = this.props.allPairs[oldIndex];
+        currentTopic = Topics.findOne({'topic': currentPair['topic']});
+        currentQuestion = currentTopic['question'];
+        leftAnswer = Candidates.findOne({'docno': currentPair['left']})
+        rightAnswer = Candidates.findOne({'docno': currentPair['right']})
+      }
+
+      var left;
+      var right;
+      var leftID;
+      var rightID;
+
+      if (leftAnswer && rightAnswer) {
+        left = leftAnswer['passage'];
+        right = rightAnswer['passage'];
+        leftID = leftAnswer['docno'];
+        rightID = rightAnswer['docno'];
+      }
+
+      this.setState({
+        ready: this.props.readyTracker,
+        displayPairIndex: oldIndex,
+        question: currentQuestion,
+        left: left,
+        right: right,
+        leftID: leftID,
+        rightID: rightID,
+      });
+    } else {
+      console.log("not ready");
+    }
+  }
+
+  updateStateNext() {
     if ((this.state.selectedAnswerID == this.state.leftID) ||
           (this.state.selectedAnswerID == this.state.rightID)) {
       this.setState({
@@ -77,6 +129,9 @@ class Comparison extends Component {
       var leftAnswer = Candidates.findOne({'docno': currentPair['left']})
       var rightAnswer = Candidates.findOne({'docno': currentPair['right']})
 
+      if (leftAnswer && rightAnswer) {
+        oldIndex = oldIndex + 1;
+      }
 
       while (! (leftAnswer && rightAnswer)) {
         oldIndex = oldIndex + 1;
@@ -101,7 +156,7 @@ class Comparison extends Component {
 
       this.setState({
         ready: this.props.readyTracker,
-        displayPairIndex: oldIndex + 1,
+        displayPairIndex: oldIndex,
         question: currentQuestion,
         left: left,
         right: right,
@@ -113,6 +168,10 @@ class Comparison extends Component {
     }
   }
 
+  onBackClickHandler() {
+    this.updateStatePrev();
+  }
+
   onContinueClickHandler() {
     var oldIndex = this.state.displayPairIndex;
     var currentQuestion;
@@ -122,7 +181,7 @@ class Comparison extends Component {
     var rightID;
 
     if (this.props.readyTracker) {
-      this.updateState();
+      this.updateStateNext();
     }
   }
 
@@ -161,17 +220,20 @@ class Comparison extends Component {
 
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-12 question">
+        <div className="row justify-content-between">
+          <div className="col-6 question">
             Question: { this.state.question }
           </div>
+
+          { this.renderBackButton() }
+
         </div>
       </div>
       );
   }
 
   answerSelected(selectedAnswerID) {
-    // console.log('selected :: ' + selectedAnswerID);
+
     this.setState({
       selectedAnswerID: selectedAnswerID,
       showWarning: false,
@@ -219,15 +281,23 @@ class Comparison extends Component {
 
   renderBackButton() {
     // onClick={ () => this.onContinueClickHandler() }>
-    return (
-      <div className="container-fluid">
-        <div className="row mx-lg-n5 justify-content-end">
-          <div className="col-md-3">
-            <button type="button" className="btn btn-primary">Go Back to Previous Question</button>
+
+    var backButtonDisabled = (this.state.displayPairIndex == 1) ? "disabled" : "";
+    if (backButtonDisabled) {
+      return (
+          <div className="col-6 backButton">
+            <button type="button" className="btn btn-primary float-right" disabled onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
           </div>
-        </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+          <div className="col-6 backButton">
+            <button type="button" className="btn btn-primary float-right" onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
+          </div>
+      );
+    }
+
+
   }
 
   render() {
@@ -244,7 +314,6 @@ class Comparison extends Component {
         <div>
           { this.renderInstruction() }
           { this.renderTopic() }
-          { this.renderBackButton() }
           { this.renderAnswers() }
           { this.state.showWarning ? this.renderWarning() : null }
           { this.renderContinue() }
