@@ -2,6 +2,18 @@ import React, { Component } from 'react';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { mount } from 'react-mounter';
 import Comparison from '../imports/ui/Comparison.js';
+import Finish from '../imports/ui/Finish.js';
+import Consent from '../imports/ui/Consent.js';
+
+FlowRouter.route('/consent/:expID', {
+  name: 'consent',
+  action(params, queryParams) {
+    mount(Consent, {
+      expID: params['expID'],
+      workerID: queryParams['workerID'],
+    });
+  }
+});
 
 FlowRouter.route('/home', {
   name: 'Home',
@@ -10,14 +22,25 @@ FlowRouter.route('/home', {
   }
 });
 
-FlowRouter.route('/Comparison', {
+FlowRouter.route('/Comparison/:expID', {
   name: 'Comparison',
   action(params, queryParams) {
     mount(Comparison, {
-      startWithPair: 0,
-      answerAID: "iamanswera",
-      answerBID: "iamanswerBBB",
-      questionText: "I am a test MSMarco question",
+      expID: params['expID'],
+      workerID: queryParams['workerID'],
+    });
+  }
+});
+
+
+// last page
+FlowRouter.route('/finish/:expID', {
+  name: 'Finish',
+  action(params, queryParams) {
+    console.log("Finish");
+    mount(Finish, {
+      expID: params['expID'],
+      workerID: queryParams['workerID'],
     });
   }
 });

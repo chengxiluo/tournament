@@ -1,188 +1,202 @@
 import React, { Component } from 'react';
-// import {Tasks} from '../api/tasks.js';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Topics, Candidates, Pairs, Users, Judgements } from '../api/records.js';
-// import { useBeforeunload } from 'react-beforeunload';
-// import { InLabExperiments, InLabLogs } from '../api/search_tasks.js';
-// import { dictToURLParams, getNextPage } from '../api/Utilities.js';
-
+import { Topics, Candidates, Pairs, Users, Judgements, Experiments, Golden, Logs } from '../api/records.js';
 
 
 class Comparison extends Component {
   constructor(props) {
     super(props);
-    this.loremipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
     this.answerSelected = this.answerSelected.bind(this);
     this.onContinueClickHandler = this.onContinueClickHandler.bind(this);
     this.onBackClickHandler = this.onBackClickHandler.bind(this);
 
     this.state = {
+      currentPairID: '',
       selectedAnswerID: '',
       displayPairIndex: 0,
       question: '',
-      left: '',
-      right: '',
-      ready: this.props.readyTracker,
-      leftID: '',
-      rightID: '',
+      questionID: '',
+      leftAnswerText: '',
+      rightAnswerText: '',
+      leftAnswerID: '',
+      rightAnswerID: '',
+      ready: this.props.readyTracker,  // is MongoDB ready?
       showWarning: false,
+      currentPair: '',
     }
   }
 
   componentDidMount() {
-    console.log("componentDidMount");
     window.addEventListener('beforeunload', function (e) {
-      // Cancel the event
       e.preventDefault();
-      // LOG TRYNG TO LEAVE THE PAGE
-      // Chrome requires returnValue to be set
       e.returnValue = '';
     });
   }
 
   componentWillUnmount() {
-    console.log("componentWillUnmount");
     window.removeEventListener("onbeforeunload", this.handleWindowBeforeUnload);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // this check is needed, otherwise an infinite loop of rerendering will start
     if (prevProps !== this.props) {
-      console.log(this.props.allPairs);
-      this.updateStateNext();
+      this.updateAnswers();
     }
   }
 
-  updateStatePrev() {
+  updateAnswers() {
     if (this.props.readyTracker) {
+
+      // contains topic (topicID), left (answerID), right (answerID)
       var currentPair = this.props.allPairs[this.state.displayPairIndex];
-      var oldIndex = this.state.displayPairIndex;
-      console.log("Current index: " + this.state.displayPairIndex);
-      console.log(currentPair);
 
+      // contains topic (topicID), question (question text), bestanswer (answerID)
       var currentTopic = Topics.findOne({'topic': currentPair['topic']});
-      var currentQuestion = currentTopic['question'];
+
+      // contains docno (answerID), passage (answer text), topic (topicID)
+      // console.log(currentPair);
       var leftAnswer = Candidates.findOne({'docno': currentPair['left']})
-      var rightAnswer = Candidates.findOne({'docno': currentPair['right']})
+      var rightAnswer = Candidates.findOne({'docno': currentPair['right']});
 
-      if (leftAnswer && rightAnswer) {
-        oldIndex = oldIndex - 1;
-      }
+      var currentQuestion = currentTopic['question'];
+      var currentQuestionID = currentTopic['topic'];
+      var leftAnswerText = leftAnswer['passage'];
+      var rightAnswerText = rightAnswer['passage'];
+      var leftAnswerID = leftAnswer['docno'];
+      var rightAnswerID = rightAnswer['docno'];
 
-      while (! (leftAnswer && rightAnswer)) {
-        oldIndex = oldIndex - 1;
-        currentPair = this.props.allPairs[oldIndex];
-        currentTopic = Topics.findOne({'topic': currentPair['topic']});
-        currentQuestion = currentTopic['question'];
-        leftAnswer = Candidates.findOne({'docno': currentPair['left']})
-        rightAnswer = Candidates.findOne({'docno': currentPair['right']})
-      }
-
-      var left;
-      var right;
-      var leftID;
-      var rightID;
-
-      if (leftAnswer && rightAnswer) {
-        left = leftAnswer['passage'];
-        right = rightAnswer['passage'];
-        leftID = leftAnswer['docno'];
-        rightID = rightAnswer['docno'];
-      }
+      // assert(currentQuestionID == rightAnswer['topicID']);
+      // assert(currentQuestionID == leftAnswer['topicID']);
 
       this.setState({
+        currentPairID: currentPair['pairID'],
         ready: this.props.readyTracker,
-        displayPairIndex: oldIndex,
         question: currentQuestion,
-        left: left,
-        right: right,
-        leftID: leftID,
-        rightID: rightID,
+        questionID: currentQuestionID,
+        leftAnswerText: leftAnswerText,
+        rightAnswerText: rightAnswerText,
+        leftAnswerID: leftAnswerID,
+        rightAnswerID: rightAnswerID,
+        currentPair: currentPair,
       });
+
     } else {
-      console.log("not ready");
+      // console.log("not ready");
     }
   }
 
-  updateStateNext() {
-    if ((this.state.selectedAnswerID == this.state.leftID) ||
-          (this.state.selectedAnswerID == this.state.rightID)) {
+  checkForWarning() {
+    if ((this.state.selectedAnswerID == this.state.leftAnswerID) ||
+          (this.state.selectedAnswerID == this.state.rightAnswerID)) {
       this.setState({
         showWarning: false,
       });
+      return false;
     } else {
       this.setState({
         showWarning: true,
       });
-      return;
-    }
-
-    if (this.props.readyTracker) {
-      var currentPair = this.props.allPairs[this.state.displayPairIndex];
-      var oldIndex = this.state.displayPairIndex;
-      console.log("Current index: " + this.state.displayPairIndex);
-      console.log(currentPair);
-
-      var currentTopic = Topics.findOne({'topic': currentPair['topic']});
-      var currentQuestion = currentTopic['question'];
-      var leftAnswer = Candidates.findOne({'docno': currentPair['left']})
-      var rightAnswer = Candidates.findOne({'docno': currentPair['right']})
-
-      if (leftAnswer && rightAnswer) {
-        oldIndex = oldIndex + 1;
-      }
-
-      while (! (leftAnswer && rightAnswer)) {
-        oldIndex = oldIndex + 1;
-        currentPair = this.props.allPairs[oldIndex];
-        currentTopic = Topics.findOne({'topic': currentPair['topic']});
-        currentQuestion = currentTopic['question'];
-        leftAnswer = Candidates.findOne({'docno': currentPair['left']})
-        rightAnswer = Candidates.findOne({'docno': currentPair['right']})
-      }
-
-      var left;
-      var right;
-      var leftID;
-      var rightID;
-
-      if (leftAnswer && rightAnswer) {
-        left = leftAnswer['passage'];
-        right = rightAnswer['passage'];
-        leftID = leftAnswer['docno'];
-        rightID = rightAnswer['docno'];
-      }
-
-      this.setState({
-        ready: this.props.readyTracker,
-        displayPairIndex: oldIndex,
-        question: currentQuestion,
-        left: left,
-        right: right,
-        leftID: leftID,
-        rightID: rightID,
-      });
-    } else {
-      console.log("not ready");
+      return true;
     }
   }
 
   onBackClickHandler() {
-    this.updateStatePrev();
+    var oldIndex = this.state.displayPairIndex;
+    var prevIndex = oldIndex - 1;
+
+    // set state is asynchronious, calling updateAnswers as a callback
+    this.setState({
+      displayPairIndex: prevIndex,
+    }, this.updateAnswers);
+  }
+
+  onExitClickHandler() {
+
+    var currentPayment = (this.state.displayPairIndex * 10 + 10)/100
+
+    var exit = window.confirm("Are you sure you want to exit this HIT?\nYour payment is will be $" + currentPayment)
+    if (exit) {
+      FlowRouter.go("/Finish/" + this.props.expID + "?workerID=" + this.props.workerID);
+    }
+
+    console.log("Exiting task")
   }
 
   onContinueClickHandler() {
-    var oldIndex = this.state.displayPairIndex;
-    var currentQuestion;
-    var left;
-    var right;
-    var leftID;
-    var rightID;
-
-    if (this.props.readyTracker) {
-      this.updateStateNext();
+    var warning = this.checkForWarning();
+    if (warning) {
+      Logs.insert({
+        workerID: this.props.workerID,
+        expID: this.props.expID,
+        action: 'continue with no selected answer',
+        timestamp: Date.now(),
+      });
+      return;
     }
+
+    var isGolden = this.state.currentPair['golden'];
+    if (isGolden) {
+      Judgements.insert({
+        topic: this.state.questionID,
+        left: this.state.leftAnswerID,
+        right: this.state.rightAnswerID,
+        selected: this.state.selectedAnswerID,
+        workerID: this.props.workerID,
+        expID: this.props.expID,
+        timestamp: Date.now(),
+        golden: isGolden,
+        bestanswer: this.state.currentPair['bestanswer'],
+        altanswer: this.state.currentPair['altanswer'],
+      });
+
+    } else {
+      Judgements.insert({
+        topic: this.state.questionID,
+        left: this.state.leftAnswerID,
+        right: this.state.rightAnswerID,
+        selected: this.state.selectedAnswerID,
+        workerID: this.props.workerID,
+        expID: this.props.expID,
+        timestamp: Date.now(),
+        golden: isGolden,
+      });
+    }
+
+
+
+    Logs.insert({
+      workerID: this.props.workerID,
+      expID: this.props.expID,
+      action: 'selected answer',
+      timestamp: Date.now(),
+    });
+
+    var oldPairIndex = this.state.displayPairIndex;
+    var nextIndex = oldPairIndex + 1;
+    if (nextIndex >= this.props.allPairs.length) {
+      // this was the last pair of the experiment
+      // finish the experiment
+      Logs.insert({
+        workerID: this.props.workerID,
+        expID: this.props.expID,
+        action: 'navigate to finish',
+        timestamp: Date.now(),
+      });
+
+      FlowRouter.go("/Finish/" + this.props.expID + "?workerID=" + this.props.workerID);
+
+
+    } else {
+      // set state is asynchronious, calling updateAnswers as a callback
+      this.setState({
+        displayPairIndex: nextIndex,
+        selectedAnswerID: '',
+      }, this.updateAnswers);
+
+    }
+
+
   }
 
   renderContinue() {
@@ -209,7 +223,6 @@ class Comparison extends Component {
               <li> If both answers are similar, select the one with the least extraneous information.</li>
               <li> If both answers are still similar, select the one with the best formatting.</li>
             </ul>
-
           </div>
         </div>
       </div>
@@ -224,16 +237,13 @@ class Comparison extends Component {
           <div className="col-6 question">
             Question: { this.state.question }
           </div>
-
           { this.renderBackButton() }
-
         </div>
       </div>
       );
   }
 
   answerSelected(selectedAnswerID) {
-
     this.setState({
       selectedAnswerID: selectedAnswerID,
       showWarning: false,
@@ -243,24 +253,23 @@ class Comparison extends Component {
   renderAnswers() {
     var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
 
-    var ASelected = (this.state.selectedAnswerID == this.state.leftID) ? " selectedCandidate " : "";
-    var BSelected = (this.state.selectedAnswerID == this.state.rightID) ? " selectedCandidate " : "";
-
+    var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
+    var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
+    console.log(this.state.leftAnswerID);
+    console.log(this.state.rightAnswerID);
     return (
       <div className="container-fluid">
         <div className="row mx-lg-n5 justify-content-between">
           <div className={  ASelected + candidateClass }
-            name={ this.state.leftID }
-            onClick={ () => this.answerSelected(this.state.leftID) }>
-            { this.state.left }
+            name={ this.state.leftAnswerID }
+            onClick={ () => this.answerSelected(this.state.leftAnswerID) }>
+            { this.state.leftAnswerText }
           </div>
 
-
-
           <div className={candidateClass + BSelected }
-            name={ this.state.rightID }
-            onClick={ () => this.answerSelected(this.state.rightID) }>
-            { this.state.right }
+            name={ this.state.rightAnswerID }
+            onClick={ () => this.answerSelected(this.state.rightAnswerID) }>
+            { this.state.rightAnswerText }
           </div>
         </div>
       </div>
@@ -280,24 +289,38 @@ class Comparison extends Component {
   }
 
   renderBackButton() {
-    // onClick={ () => this.onContinueClickHandler() }>
-
-    var backButtonDisabled = (this.state.displayPairIndex == 1) ? "disabled" : "";
+    var backButtonDisabled = (this.state.displayPairIndex == 0) ? "disabled" : "";
     if (backButtonDisabled) {
       return (
-          <div className="col-6 backButton">
-            <button type="button" className="btn btn-primary float-right" disabled onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
+        <div className="col-6">
+          <div className="row justify-content-end">
+
+            <div className="col-6 backButton">
+              <button type="button" className="btn btn-primary btn-block" disabled onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
+            </div>
+
+            <div className="col-3 exitButton">
+              <button type="button" className="btn btn-danger float-right btn-block" onClick={ () => this.onExitClickHandler() }>Exit task</button>
+            </div>
+
           </div>
+        </div>
       );
     } else {
       return (
-          <div className="col-6 backButton">
-            <button type="button" className="btn btn-primary float-right" onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
+          <div className="col-6">
+            <div className="row justify-content-end">
+              <div className="col-6 backButton">
+                <button type="button" className="btn btn-primary btn-block" onClick={ () => this.onBackClickHandler() }>Go Back to Previous Question</button>
+              </div>
+
+              <div className="col-3 exitButton">
+                <button type="button" className="btn btn-danger float-right btn-block" onClick={ () => this.onExitClickHandler() }>Exit task</button>
+              </div>
+            </div>
           </div>
       );
     }
-
-
   }
 
   render() {
@@ -324,23 +347,62 @@ class Comparison extends Component {
     }
   }
 
-// <Beforeunload onBeforeunload={() => "You'll lose your data!"} />
 }
 
 export default ComparisonContainer = withTracker((props) => {
   const pairsHandle = Meteor.subscribe("pairs", props);
   const candidatesHandle = Meteor.subscribe("candidates", props);
   const topicsHandle = Meteor.subscribe("topics", props);
+  const experimentsHandle = Meteor.subscribe("experiments", props);
 
-  var ready = (pairsHandle.ready() && candidatesHandle.ready() && topicsHandle.ready());
+  var ready = (pairsHandle.ready() && candidatesHandle.ready() && topicsHandle.ready() && experimentsHandle.ready());
 
   var allPairs;
+  var expID;
+  var workerID;
+
   if (ready) {
-    allPairs = Pairs.find({}).fetch();
+    expID = props.expID;
+    workerID = props.workerID;
+    allPairs = Experiments.findOne({'expID': expID}); // .fetch();
+    allPairs = allPairs['pairs'];
+    // shuffle the order of the pairs
+    var m = allPairs.length, t, i;
+    // While there remain elements to shuffle…
+    while (m) {
+      // Pick a remaining element…
+      i = Math.floor(Math.random() * m--);
+      // And swap it with the current element.
+      t = allPairs[m];
+      allPairs[m] = allPairs[i];
+      allPairs[i] = t;
+    }
   }
+
+
+
 
   return {
     readyTracker: ready,
     allPairs: allPairs,
+    expID: expID,
+    workerID: workerID,
+    displayPairIndexProp: 0,
   };
 })(Comparison);
+
+
+// const shuffle = (array) => {
+//   var m = array.length, t, i;
+//   // While there remain elements to shuffle…
+//   while (m) {
+//     // Pick a remaining element…
+//     i = Math.floor(Math.random() * m--);
+
+//     // And swap it with the current element.
+//     t = array[m];
+//     array[m] = array[i];
+//     array[i] = t;
+//   }
+//   return array;
+// }

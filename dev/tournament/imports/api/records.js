@@ -6,6 +6,10 @@ export const Topics = new Mongo.Collection('topics');
 export const Pairs = new Mongo.Collection('pairs');
 export const Users = new Mongo.Collection('users');
 export const Judgements = new Mongo.Collection('judgements');
+export const Experiments = new Mongo.Collection('experiments');
+export const Golden = new Mongo.Collection('golden');
+export const CompletionCodes = new Mongo.Collection('completionCodes');
+export const Logs = new Mongo.Collection('logs');
 
 
 if (Meteor.isServer) {
@@ -34,4 +38,23 @@ if (Meteor.isServer) {
     return Judgements.find({});
   });
 
+  Meteor.publish('experiments', function(){
+    // console.log("publish pairs");
+    return Experiments.find({});
+  });
+
+  Meteor.publish('golden', function(){
+    // console.log("publish pairs");
+    return Golden.find({});
+  });
+
+  Meteor.publish('completionCodes', function(){
+    // console.log("publish pairs");
+    return CompletionCodes.find({});
+  });
+
+  Meteor.publish('logs', function(){
+    // console.log("publish pairs");
+    return Logs.find({});
+  });
 }
