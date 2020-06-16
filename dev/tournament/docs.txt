@@ -1,0 +1,115 @@
+Meteor App deployed to AWS. The making of.
+1. cd to <project directory>/.deploy
+2. Update mup.js file with values from amazon EC2 instance
+- update app.env.ROOT_URL
+- update servers.one.host
+3. mup setup
+4. mup deploy
+5. the app should be running at app.env.ROO_URL
+
+
+
+
+#Deploying Meteor app to AWS.
+
+0. I followed this guide: https://medium.com/@philipaffulnunoo/how-to-deploy-meteor-1-4-app-to-aws-ec2-in-2017-bfea1a7c308a
+But see below for little tweaks.
+0.1. Make sure to get an Ubuntu 14 or 16 server, others won't work with mup.
+0.2. Make sure to add security groups that allow HTTP and HTTPS traffic
+
+1. Register on AWS for a free tier. They still will ask for a credit card, but won't charge it unless you go over the free tier limits.
+
+2. ssh to the EC2 machine and install docker. MUP is supposed to install all dependencies, but it will fail if docker is not installed
+sudo apt-get update   # update repo
+sudo apt install docker.io   # install docker
+sudo usermod -aG docker ${USER}   # add user to docker user group, so that you don't have to use sudo
+exit
+# ssh again
+docker info   # to check that your user has the right permissions. Should give you a summary.
+
+3. When editing mup.js file,
+set env.ROOT_URL: to your Public DNS IPv4 ('http://ec2-....us-east-2.compute.amazonaws.com')
+
+4. At the time of the writing I still need to figure out how to use SSL, and how to hook up Mongo DB (UPD: see #Setting up MongoDB on Atlas below). For now I just commented it out.
+
+Other useful links for this:
+-- https://github.com/zodern/meteor-up/issues/974  . Meteor setup fails
+-- https://medium.com/@cjus/installing-docker-ce-on-an-aws-ec2-instance-running-ubuntu-16-04-f42fe7e80869  -- install docker on ubuntu
+
+
+5. From ./deploy folder run
+mup setup (every time mup.js changes)
+mup deploy (to deploy on remote server)
+
+
+
+
+#Setting up MongoDB on Atlas
+
+1. How to register: https://www.okgrow.com/posts/mongodb-atlas-setup
+2. Connection URI is under "Connect" button -> "Connect your application" -> "Standartd connection string"
+It looks like this: mongodb://sashavtyurina:<PASSWORD>@cluster0-shard....
+Use this URL in mup.js as MONGO_URL, and don't forget to add mup.js to .gitignore, as it stores the password as plain text.
+Also delete mongo object from mup.js, otherwise it will set up and use a local mongo DB.
+3. I whitelisted only certain ip addresses, and now that they changed, I couldn't connect to the database through mongodb shell.
+The error was:
+Unable to reach primary for set Cluster0-shard-0
+2019-02-08T22:38:22.681-0500 I NETWORK  [js] Cannot reach any nodes for set Cluster0-shard-0. Please check network connectivity and the status of the set. This has happened for 7 checks in a row.
+I whitelisted access from anywhere on Atlas Mongo to solve this problem.
+
+
+
+
+
+#Creating a Meteor App
+1. Creating an empty Meteor React application. meteor create --react <app_name>
+
+2. meteor npm is a package manager similar to npm, but not entirely.
+
+3. We create additional "imports" directory. It used to be that all files outside of imports dir were automatically loaded on application start, whereas files from import directory were loaded only when required. Starting Meteor 1.8 this behaviour was deprecated and now *all* files are loaded only when "import" or "required" si used.
+
+4. We are using FlowRouter in our app. We can specify our routes either in client/main.js, or an external file (client/routes.js) and then import it to client/main.js (import './routes.js')
+
+5. To be able to render React components depending on the URL, we need to install react-mounter package (npm install --save react-mounter). Evidently, there is no way to get around without using it.
+
+6. Don't forget the imports. The errors that are thrown are very weird and not at all descriptive or helpful. When I forgot to include "import React, { Component } from 'react' " it kept failing with an error that "Component was not found.".
+
+7. Bind events to functions inside constructor.
+
+8. Install react-beautiful-dnd for drag-and-drop of list items.
+meteor npm install react-beautiful-dnd --save
+
+9. When using react-beautiful-dnd, and wrapping elements in Draggable and Droppable, make sure that you are wrapping simple HTML elements like div, as opposed to React components. If you have a React component that needs to become Draggable or Droppable, wrap them into a div, and wrap that div into a Draggable/Droppable. Here's a HRef documentation from them. https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/guides/using-inner-ref.md
+
+10. React beautiful dnd requires the list to be created from state data, so that when the ordering changes, the state will be changed as well and the new order will persist. To do that, I am initializing state directly from the Mongo props. The problem is, the first time the component renders, the data from Mongo returns empty, and soon after returns properly. When the constructor is called, the data is still empty, and the state cannot be initialized. The way out is to reinitialize state in ComponentDidUpdate (it is called every time the props of the component change). (The old version is to do it in componentWillReceiveProps, but it was deprecated.)
+
+
+
+#To run this on another machine:
+1. Install npm
+2. Install meteor
+3. Install react, react-dom ("meteor npm install --save react react-dom")
+4. Install FlowRouter (meteor add kadira:flow-router)
+
+//
+meteor npm install --save @babel/runtime
+
+
+#Troubleshooting
+
+(1) docker: Error response from daemon: driver failed programming external connectivity on endpoint AudioSerp (215a69e7c17c30227f5870da83e56d9b980c0ff4915fa6421edc99f1ce461342): Bind for 0.0.0.0:80 failed: port is already allocated.
+
+Something might be using port 80.
+docker ps
+sudo docker stop <ID of docker using 80>
+
+(https://github.com/zodern/meteor-up/issues/67)
+
+
+(2) Bind for 0.0.0.0:80 failed: port is already allocated.
+- ssh to the aws server: ssh -i linux_key.pem ubuntu@18.219.17.158
+- docker ps
+- # find process that uses port 80:  0.0.0.0:80->80/tcp
+- sudo docker stop bef00dd7a1fd
+
+
