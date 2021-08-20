@@ -116,4 +116,4 @@ Check consent page: `http://<AWSPublicIPAddress>/consent/<ID>`
 You are done!
 
 
-For more detailed instructions, like why we have to do each step, check docs.txt. 
+For more detailed instructions, like why we have to do each step, check dev/tournament/docs.txt. 
