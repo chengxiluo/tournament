@@ -1,4 +1,4 @@
-# Simple instructions:
+# Simple instructions
 
 
 ## Construct EC2:
@@ -106,3 +106,6 @@
 Check consent page: `http://<AWSPublicIPAddress>/consent/<ID>`
 
 You are done!
+
+
+For more detailed instructions, like why we have to do each step, check docs.txt. 
