@@ -10,7 +10,7 @@ Repo for pairwise comparison of passages answering a question.
 2. Create key pair and download ppk first.
 3. Create an EC2 instance, get an Ubuntu 14 or 16 server
 4. Add security groups that allow HTTP and HTTPS traffic 
-5. Free tier (micro) works (pretty slow), but strongly recommend small. 
+5. Free tier (micro) works (pretty slow), but strongly recommend small with 16 GB storage. 
 
 
 ## Connect to AWS:
