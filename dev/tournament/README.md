@@ -29,6 +29,11 @@
     ~~~
 3. More installations (npm, mup, nodejs, meteor, react, flowrouter):
 
+    Go to project dir:
+    ```
+    cd tournament/dev/tournament
+    ```
+
     Install npm:
     ~~~
     sudo apt install npm
