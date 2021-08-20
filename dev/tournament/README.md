@@ -69,7 +69,10 @@
     ~~~
     meteor npm install react-beautiful-dnd --save
     ~~~
-    
+    Install reach-html-parser
+    ~~~
+    meteor npm install --save react-html-parser
+    ~~~
 ## Edit mup.js file
 1. Go to tournament/dev/tournament/.deploy directory, generate mup.js file
     ~~~
