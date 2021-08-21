@@ -83,3 +83,9 @@ body {
 .exitButton {
   padding:20px;
 }
+
+.scrolldiv{
+	color: 'blue';
+	overflow: 'scroll';
+	height: 40px;
+}
