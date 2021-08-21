@@ -9,22 +9,9 @@ class Consent extends Component {
     super(props);
     // this.onContinueClickHandler = this.onContinueClickHandler.bind(this);
     // this.onQuitClickHandler = this.onQuitClickHandler.bind(this);
-    this.state = {workerID:''};
-    
-    
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+
   }
 
-  handleChange(event) {
-    this.setState({workerID: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('Your worker ID was submitted: ' + this.state.workerID);
-    event.preventDefault();
-  }
-  
   render1() {
     return (
       <div>
@@ -34,7 +21,6 @@ class Consent extends Component {
   }
 
   render() {
-
     return (
       <div>
         <div className="container">
@@ -45,7 +31,7 @@ class Consent extends Component {
 
           <div className="row consent">
           <p>
-            This study is conducted by Dr. Charles L.A. Clarke and Chengxi Luo, a master student,
+            This study is conducted by Dr. Charles L.A. Clarke and Sasha Vtyurina, a PhD student,
             at the School of Computer Science of the University of Waterloo, Canada.
           </p>
           </div>
@@ -68,7 +54,7 @@ class Consent extends Component {
           </div>
 
           <div className="row consent">
-           <img src='https://i.postimg.cc/ZKtwNXyK/interface-example.png'
+           <img src="https://tournament2020.s3.us-east-2.amazonaws.com/example.png"
            alt="Interface example" className="consentImage"/>
 
           </div>
@@ -91,7 +77,7 @@ class Consent extends Component {
             </ul>
 
             <p>
-            Each HIT contains 20-35 questions and takes around 12-15 minutes to complete.
+            Each HIT contains 13 questions and takes around 10-12 minutes to complete.
             After completing all questions, you will be taken to a page with a confirmation code.
             Use this code to complete the HIT on the Amazon Mechanical Turk platform.
             </p>
@@ -107,7 +93,8 @@ class Consent extends Component {
             paid USD 2 per HIT. You may choose to withdraw from the task at
             any point by clicking the “Exit task” button in the top right corner
             of the screen. “Exit task” button will take you to the screen with MTurk code.
-            You will get 0 for starting the HIT if you exit during the study.</p>
+            You will get remunerated ¢10 for starting the HIT, ¢10 for each completed
+            search task, and ¢60 for finishing the entire HIT.</p>
           </div>
 
           <div className="row consent">
@@ -119,9 +106,9 @@ class Consent extends Component {
             You may decline to interact with the interface or decline to answer
             any questions in the questionnaire at any time you want. If after finishing
             the task you wish to withdraw the data you have provided, you can do so by
-            contacting Chengxi Luo at
-            chengxi.luo@uwaterloo.ca. You may withdraw your data up until the
-            dataset is released publicly on February 15, 2021.</p>
+            contacting Charles L.A. Clarke at claclark@gmail.com or Sasha Vtyurina at
+            sasha.vtyurina@uwaterloo.ca. You may withdraw your data up until the
+            dataset is released publicly on May 15, 2020.</p>
           </div>
 
           <div className="row consent">
@@ -166,8 +153,9 @@ class Consent extends Component {
             <b>Questions.</b>
 
              Should you have any questions about the study, please contact
-             Chengxi Luo at chengxi.luo@uwaterloo.ca. Further, if you would like to
-             receive a copy of the results of this study, please contact Chengxi Luo.
+             Charles L.A. Clarke (claclark@gmail.com) or Sasha Vtyurina
+             (sasha.vtyurina@uwaterloo.ca). Further, if you would like to
+             receive a copy of the results of this study, please contact either investigator.
              </p>
           </div>
 
@@ -184,36 +172,11 @@ class Consent extends Component {
           <div className="row consent">
             <div className="col">
               <button
+              onClick={ () => this.onContinueClickHandler() }
               type="button"
               className="btn btn-success btn-lg"
-              data-toggle="modal" data-target="#myModal">
-                I agree. Continue to experiment. </button>
+            > I agree. Continue to experiment. </button>
             </div>
-
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-					
-                  <div class="modal-body">
-                    Please provide your workerID so that we can verify your answers and give you reward. 
-                    <form>
-                      <label>
-                        Your Worker ID:
-                        <input type="text" value={this.state.workerID} onChange={this.handleChange} />
-                      </label>
-                    </form>
-                  </div>
-					
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" data-dismiss="modal" onClick={ () => this.onContinueClickHandler()}>Continue</button>
-                  </div>
-					
-                </div>
-              </div>
-            </div>
-
-
 
             <div className="col">
               <button
@@ -239,15 +202,14 @@ class Consent extends Component {
   }
 
   onContinueClickHandler(){
-    
     Logs.insert({
-        workerID: this.state.workerID,
+        workerID: this.props.workerID,
         expID: this.props.expID,
         action: 'consent signed',
         timestamp: Date.now(),
       });
 
-    FlowRouter.go("/comparison/" + this.props.expID + "?workerID=" + this.state.workerID);
+    FlowRouter.go("/comparison/" + this.props.expID + "?workerID=" + this.props.workerID);
   }
 }
 
