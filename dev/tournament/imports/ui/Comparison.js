@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Topics, Candidates, Pairs, Users, Judgements, Experiments, Golden, Logs } from '../api/records.js';
+import ReactHtmlParser from 'react-html-parser'; 
 
 
 class Comparison extends Component {
@@ -146,8 +147,8 @@ class Comparison extends Component {
         expID: this.props.expID,
         timestamp: Date.now(),
         golden: isGolden,
-        bestanswer: this.state.currentPair['bestanswer'],
-        altanswer: this.state.currentPair['altanswer'],
+        //bestanswer: this.state.currentPair['bestanswer'],
+        //altanswer: this.state.currentPair['altanswer'],
       });
 
     } else {
@@ -251,70 +252,50 @@ class Comparison extends Component {
   }
 
 
-    renderAnswers() {
-      var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
+  renderAnswers() {
+    var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
 
-      var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
-      var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
-      console.log(this.state.leftAnswerID);
-      console.log(this.state.rightAnswerID);
-      return (
-  	    <div className="container-fluid">
-          <div className="row mx-lg-n5 justify-content-between">
+    var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
+    var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
+	
 
-            <button type="button" className={  ASelected + candidateClass }
-              name={ this.state.leftAnswerID } data-toggle="modal" data-target="#myModal">
-  			           { this.state.leftAnswerText.split('\n')[0] }
-  		      </button>
+	const divStyle = {
+		overflowY: 'auto',
+		height: 400
+	};
+	
+	//console.log(this.state);
+    //console.log(this.state.leftAnswerID);
+    //console.log(this.state.rightAnswerID);
+    return (
+      <div className="container-fluid">
+	  
+        <div className="row mx-lg-n5 justify-content-between">
+          <div className={  ASelected + candidateClass }
+            name={ this.state.leftAnswerID }
+            onClick={ () => this.answerSelected(this.state.leftAnswerID) } 
+			style={divStyle}>
 
-  		      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  			    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-  				    <div class="modal-content">
-  					    <div class="modal-header">
-  						    <h4 class="modal-title" id="myModalLabel">{this.state.leftAnswerText.split('\n')[0]}</h4>
-  						    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  					    </div>
+			{ ReactHtmlParser (this.state.leftAnswerText) }
 
-  					    <div class="modal-body">
-  					    	{this.state.leftAnswerText}
-  				    	</div>
+		  </div>
+		
+          <div className={candidateClass + BSelected }
+            name={ this.state.rightAnswerID }
+            onClick={ () => this.answerSelected(this.state.rightAnswerID) }
+			style = {divStyle}>
+			{ ReactHtmlParser (this.state.rightAnswerText) }
 
-  					    <div class="modal-footer">
-  						    <button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
-  					      <button type="button" class="btn btn-primary" onClick={ () => this.answerSelected(this.state.leftAnswerID) }>Choose</button>
-  				    	</div>
-  				    </div>
-  			    </div>
-  		      </div>
-
-  		      <button type="button" className={  candidateClass + BSelected }
-              name={ this.state.rightAnswerID } data-toggle="modal" data-target="#myModal2">
-  			           { this.state.rightAnswerText.split('\n')[0] }
-  		      </button>
-
-  		      <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  			    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-  				    <div class="modal-content">
-  					    <div class="modal-header">
-  						    <h4 class="modal-title" id="myModalLabel">{this.state.rightAnswerText.split('\n')[0]}</h4>
-  						    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  					    </div>
-
-  					    <div class="modal-body">
-  						    {this.state.rightAnswerText}
-  					    </div>
-
-  					    <div class="modal-footer">
-  						    <button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
-  						    <button type="button" class="btn btn-primary" onClick={ () => this.answerSelected(this.state.rightAnswerID) }>Choose</button>
-  					    </div>
-  				    </div>
-  			    </div>
-  		      </div>
+		  
           </div>
         </div>
-      );
-    }
+      </div>
+
+    
+
+
+    );
+  }
 
   renderWarning() {
     return (
