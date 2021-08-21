@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Topics, Candidates, Pairs, Users, Judgements, Experiments, Golden, Logs } from '../api/records.js';
+import ReactHtmlParser from 'react-html-parser'; 
 
 
 class Comparison extends Component {
@@ -146,8 +147,8 @@ class Comparison extends Component {
         expID: this.props.expID,
         timestamp: Date.now(),
         golden: isGolden,
-        bestanswer: this.state.currentPair['bestanswer'],
-        altanswer: this.state.currentPair['altanswer'],
+        //bestanswer: this.state.currentPair['bestanswer'],
+        //altanswer: this.state.currentPair['altanswer'],
       });
 
     } else {
@@ -250,29 +251,49 @@ class Comparison extends Component {
     });
   }
 
+
   renderAnswers() {
     var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
 
     var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
     var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
-    console.log(this.state.leftAnswerID);
-    console.log(this.state.rightAnswerID);
+	
+
+	const divStyle = {
+		overflowY: 'auto',
+		height: 400
+	};
+	
+	//console.log(this.state);
+    //console.log(this.state.leftAnswerID);
+    //console.log(this.state.rightAnswerID);
     return (
       <div className="container-fluid">
+	  
         <div className="row mx-lg-n5 justify-content-between">
           <div className={  ASelected + candidateClass }
             name={ this.state.leftAnswerID }
-            onClick={ () => this.answerSelected(this.state.leftAnswerID) }>
-            { this.state.leftAnswerText }
-          </div>
+            onClick={ () => this.answerSelected(this.state.leftAnswerID) } 
+			style={divStyle}>
 
+			{ ReactHtmlParser (this.state.leftAnswerText) }
+
+		  </div>
+		
           <div className={candidateClass + BSelected }
             name={ this.state.rightAnswerID }
-            onClick={ () => this.answerSelected(this.state.rightAnswerID) }>
-            { this.state.rightAnswerText }
+            onClick={ () => this.answerSelected(this.state.rightAnswerID) }
+			style = {divStyle}>
+			{ ReactHtmlParser (this.state.rightAnswerText) }
+
+		  
           </div>
         </div>
       </div>
+
+    
+
+
     );
   }
 
