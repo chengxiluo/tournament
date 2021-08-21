@@ -250,31 +250,71 @@ class Comparison extends Component {
     });
   }
 
-  renderAnswers() {
-    var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
 
-    var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
-    var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
-    console.log(this.state.leftAnswerID);
-    console.log(this.state.rightAnswerID);
-    return (
-      <div className="container-fluid">
-        <div className="row mx-lg-n5 justify-content-between">
-          <div className={  ASelected + candidateClass }
-            name={ this.state.leftAnswerID }
-            onClick={ () => this.answerSelected(this.state.leftAnswerID) }>
-            { this.state.leftAnswerText }
-          </div>
+    renderAnswers() {
+      var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
 
-          <div className={candidateClass + BSelected }
-            name={ this.state.rightAnswerID }
-            onClick={ () => this.answerSelected(this.state.rightAnswerID) }>
-            { this.state.rightAnswerText }
+      var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
+      var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
+      console.log(this.state.leftAnswerID);
+      console.log(this.state.rightAnswerID);
+      return (
+  	    <div className="container-fluid">
+          <div className="row mx-lg-n5 justify-content-between">
+
+            <button type="button" className={  ASelected + candidateClass }
+              name={ this.state.leftAnswerID } data-toggle="modal" data-target="#myModal">
+  			           { this.state.leftAnswerText.split('\n')[0] }
+  		      </button>
+
+  		      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+  				    <div class="modal-content">
+  					    <div class="modal-header">
+  						    <h4 class="modal-title" id="myModalLabel">{this.state.leftAnswerText.split('\n')[0]}</h4>
+  						    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  					    </div>
+
+  					    <div class="modal-body">
+  					    	{this.state.leftAnswerText}
+  				    	</div>
+
+  					    <div class="modal-footer">
+  						    <button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
+  					      <button type="button" class="btn btn-primary" onClick={ () => this.answerSelected(this.state.leftAnswerID) }>Choose</button>
+  				    	</div>
+  				    </div>
+  			    </div>
+  		      </div>
+
+  		      <button type="button" className={  candidateClass + BSelected }
+              name={ this.state.rightAnswerID } data-toggle="modal" data-target="#myModal2">
+  			           { this.state.rightAnswerText.split('\n')[0] }
+  		      </button>
+
+  		      <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+  				    <div class="modal-content">
+  					    <div class="modal-header">
+  						    <h4 class="modal-title" id="myModalLabel">{this.state.rightAnswerText.split('\n')[0]}</h4>
+  						    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  					    </div>
+
+  					    <div class="modal-body">
+  						    {this.state.rightAnswerText}
+  					    </div>
+
+  					    <div class="modal-footer">
+  						    <button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
+  						    <button type="button" class="btn btn-primary" onClick={ () => this.answerSelected(this.state.rightAnswerID) }>Choose</button>
+  					    </div>
+  				    </div>
+  			    </div>
+  		      </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
   renderWarning() {
     return (

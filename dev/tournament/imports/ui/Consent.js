@@ -9,8 +9,21 @@ class Consent extends Component {
     super(props);
     // this.onContinueClickHandler = this.onContinueClickHandler.bind(this);
     // this.onQuitClickHandler = this.onQuitClickHandler.bind(this);
-
+    this.state = {workerID:''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
+
+  handleChange(event) {
+    this.setState({workerID: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('Your worker ID was submitted: ' + this.state.workerID);
+    event.preventDefault();
+  }
+
+
 
   render1() {
     return (
@@ -82,9 +95,6 @@ class Consent extends Component {
             Use this code to complete the HIT on the Amazon Mechanical Turk platform.
             </p>
           </div>
-
-
-
 
 
 
@@ -172,10 +182,33 @@ class Consent extends Component {
           <div className="row consent">
             <div className="col">
               <button
-              onClick={ () => this.onContinueClickHandler() }
+              //onClick={ () => this.onContinueClickHandler() }
               type="button"
-              className="btn btn-success btn-lg"
+              className="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
             > I agree. Continue to experiment. </button>
+            </div>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+
+                  <div class="modal-body">
+                    Please provide your workerID so that we can verify your answers and give you reward.
+                    <form>
+                      <label>
+                        Your Worker ID:
+                        <input type="text" value={this.state.workerID} onChange={this.handleChange} />
+                      </label>
+                    </form>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" onClick={ () => this.onContinueClickHandler()}>Continue</button>
+                  </div>
+
+                </div>
+              </div>
             </div>
 
             <div className="col">
@@ -193,23 +226,23 @@ class Consent extends Component {
 
   onQuitClickHandler(){
     Logs.insert({
-        workerID: this.props.workerID,
+        workerID: this.state.workerID,
         expID: this.props.expID,
         action: 'consent rejected',
         timestamp: Date.now(),
       });
-    FlowRouter.go("/Finish/" + this.props.expID + "?workerID=" + this.props.workerID);
+    FlowRouter.go("/Finish/" + this.props.expID + "?workerID=" + this.state.workerID);
   }
 
   onContinueClickHandler(){
     Logs.insert({
-        workerID: this.props.workerID,
+        workerID: this.state.workerID,
         expID: this.props.expID,
         action: 'consent signed',
         timestamp: Date.now(),
       });
 
-    FlowRouter.go("/comparison/" + this.props.expID + "?workerID=" + this.props.workerID);
+    FlowRouter.go("/comparison/" + this.props.expID + "?workerID=" + this.state.workerID);
   }
 }
 

@@ -1,2 +1,3 @@
-dev/tournament/macbook.pem
-dev/tournament/.deploy/mup.js
+*.pem
+*.ppk
+mup.js
