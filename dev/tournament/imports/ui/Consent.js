@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Logs } from '../api/records.js';
 

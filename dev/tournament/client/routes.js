@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { mount } from 'react-mounter';
 import Comparison from '../imports/ui/Comparison.js';
 import Finish from '../imports/ui/Finish.js';

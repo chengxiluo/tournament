@@ -5,7 +5,7 @@
 1. Guide here, but with some following changes: https://medium.com/@philipaffulnunoo/how-to-deploy-meteor-1-4-app-to-aws-ec2-in-2017-bfea1a7c308a
 2. Create key pair and download ppk first.
 3. Create an EC2 instance, get an Ubuntu 14 or 16 server
-4. Add security groups that allow HTTP and HTTPS traffic 
+4. Add security groups that allow HTTP, HTTPS and MongoDB (port 27017 - 27039) traffic 
 5. Free tier (micro) works (pretty slow), but strongly recommend small. 
 
 
@@ -79,22 +79,41 @@
     mup init
     ~~~
 2. edit mup.js file:
+    ```
+    module.exports = {
+        servers: {
+            one: {
+            host: 'your-ec2-public-ip',
+            username: 'ubuntu',
+            pem: 'path/to/pem'
+            }
+        },
 
-    host => AWS Public IPv4 address
-    
-    username => ubuntu
-    
-    unslash pem, pem => pem key address (remember use scp to upload your AWS pem key)
-    
-    path => '/home/ubuntu/tournament/dev/tournament'
-    
-    ROOT_URL => AWS Public DNS IPv4 (`http://ec2-....us-east-2.compute.amazonaws.com`)
-    
-    MONGO_URL => we will edit after we set up MongoDB
-    
-    slash MONGO_OPLOG_URL
-    
-    slash mongo part
+        app: {
+            name: 'app',
+            path: 'path/to/tournament/dev/tournament',
+
+            servers: {
+                one: {},
+            },
+
+            buildOptions: {
+                serverOnly: true,
+            },
+
+            env: {
+                ROOT_URL: 'http://your-ec2-public-dns-domain',
+                MONGO_URL: 'mongodb://your-mongo-db-url-with-correct-database', 
+            },
+
+            docker: {
+                image: 'zodern/meteor:latest',
+            },
+
+            enableUploadProgressBar: true
+        },
+    };
+    ```
 
 ## Setting up MondoDB on Atlas
 1. Register guide: https://www.okgrow.com/posts/mongodb-atlas-setup

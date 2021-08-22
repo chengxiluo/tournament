@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Topics, Candidates, Pairs, Users, Judgements, Experiments, Golden, Logs } from '../api/records.js';
 import ReactHtmlParser from 'react-html-parser'; 
@@ -386,6 +386,10 @@ export default ComparisonContainer = withTracker((props) => {
     expID = props.expID;
     workerID = props.workerID;
     allPairs = Experiments.findOne({'expID': expID}); // .fetch();
+
+    console.log(props);
+    console.log(allPairs);
+
     allPairs = allPairs['pairs'];
     // shuffle the order of the pairs
     var m = allPairs.length, t, i;

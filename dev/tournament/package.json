@@ -10,9 +10,13 @@
   "dependencies": {
     "@babel/runtime": "^7.6.0",
     "meteor-node-stubs": "^1.0.0",
-    "react": "^16.9.0",
+    "mongodb": "^4.1.0",
+    "node": "^16.6.1",
+    "react": "^16.14.0",
+    "react-beautiful-dnd": "^13.1.0",
     "react-beforeunload": "^2.1.0",
-    "react-dom": "^16.9.0",
+    "react-dom": "^16.14.0",
+    "react-html-parser": "^2.0.2",
     "react-mounter": "^1.2.0"
   },
   "meteor": {
