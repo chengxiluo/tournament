@@ -9,7 +9,7 @@ Repo for pairwise comparison of passages answering a question.
 1. Guide here, but with some following changes: https://medium.com/@philipaffulnunoo/how-to-deploy-meteor-1-4-app-to-aws-ec2-in-2017-bfea1a7c308a
 2. Create key pair and download ppk first.
 3. Create an EC2 instance, get an Ubuntu 14 or 16 server
-4. Add security groups that allow HTTP and HTTPS traffic
+4. Add security groups that allow HTTP, HTTPS and MongoDB (port 27017 - 27039) traffic 
 5. Free tier (micro) works (pretty slow), but strongly recommend small with 16 GB storage.
 
 
@@ -19,7 +19,7 @@ Repo for pairwise comparison of passages answering a question.
 
 ## Deploy Meteor app to AWS:
 1. Install docker:
-    ~~~
+    ~~~ 
     sudo apt-get update   # update repo
     sudo apt install docker.io   # install docker
     sudo usermod -aG docker ${USER}   # add user to docker user group, so that you don't have to use sudo
@@ -83,22 +83,41 @@ Repo for pairwise comparison of passages answering a question.
     mup init
     ~~~
 2. edit mup.js file:
+    ```
+    module.exports = {
+        servers: {
+            one: {
+            host: 'your-ec2-public-ip',
+            username: 'ubuntu',
+            pem: 'path/to/pem'
+            }
+        },
 
-    host => AWS Public IPv4 address
+        app: {
+            name: 'app',
+            path: 'path/to/tournament/dev/tournament',
 
-    username => ubuntu
+            servers: {
+                one: {},
+            },
 
-    unslash pem, pem => pem key address (remember use scp to upload your AWS pem key)
+            buildOptions: {
+                serverOnly: true,
+            },
 
-    path => '/home/ubuntu/tournament/dev/tournament'
+            env: {
+                ROOT_URL: 'http://your-ec2-public-dns-domain',
+                MONGO_URL: 'mongodb://your-mongo-db-url-with-correct-database', 
+            },
 
-    ROOT_URL => AWS Public DNS IPv4 (`http://ec2-....us-east-2.compute.amazonaws.com`)
+            docker: {
+                image: 'zodern/meteor:latest',
+            },
 
-    MONGO_URL => we will edit after we set up MongoDB
-
-    slash MONGO_OPLOG_URL
-
-    slash mongo part
+            enableUploadProgressBar: true
+        },
+    };
+    ```
 
 ## Setting up MondoDB on Atlas
 1. Register guide: https://www.okgrow.com/posts/mongodb-atlas-setup
@@ -106,15 +125,15 @@ Repo for pairwise comparison of passages answering a question.
 
     It looks like this: `mongodb://<username>:<PASSWORD>@cluster0-shard....`
 3. edit mup.js file again:
-
+  
     MONGO_URL => use above URI
 
 ## From ./deploy folder, run
-
+ 
     mup setup # every time mup.js changes
     mup deploy # to deploy on remote server, this takes some time
 
-
+  
 Check consent page: `http://<AWSPublicIPAddress>/consent/<ID>`
 
 You are done!
