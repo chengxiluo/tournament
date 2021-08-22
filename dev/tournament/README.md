@@ -18,9 +18,9 @@
     ~~~ 
     sudo apt-get update   # update repo
     sudo apt install docker.io   # install docker
-    sudo usermod -aG docker ${USER}   # add user to docker user group, so that you don't have to use sudo
-    exit
-    # restart
+    sudo gpasswd -a $USER docker
+    newgrp docker
+    
     docker info   # to check that your user has the right permissions. Should give you a summary.
     ~~~
 2. Upload tournament code:
