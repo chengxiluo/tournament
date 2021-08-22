@@ -44,12 +44,10 @@ Repo for pairwise comparison of passages answering a question.
     ~~~
     Install mup:
     ~~~
-    sudo npm install -g mup@1.4
-    sudo ln -s /usr/bin/nodejs /usr/bin/node
+    sudo npm install -g mup
     ~~~
     Install nodejs:
     ~~~
-    sudo npm cache clean -f
     sudo npm install -g n
     sudo n stable
     ~~~
@@ -63,11 +61,11 @@ Repo for pairwise comparison of passages answering a question.
     ~~~
     Install FlowRouter:
     ~~~
-    meteor add kadira:flow-router
+    meteor add ostrio:flow-router-extra
     ~~~
     Install react-mounter package:
     ~~~
-    npm install --save react-mounter
+    meteor npm install --save react-mounter
     ~~~
     Install react-beautiful-dnd for drag-and-drop of list items:
     ~~~
