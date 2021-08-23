@@ -38,42 +38,9 @@ Repo for pairwise comparison of passages answering a question.
     cd tournament/dev/tournament
     ```
 
-    Install npm:
+    Install dependencies:
     ~~~
-    sudo apt install npm
-    ~~~
-    Install mup:
-    ~~~
-    sudo npm install -g mup
-    ~~~
-    Install nodejs:
-    ~~~
-    sudo npm install -g n
-    sudo n stable
-    ~~~
-    Install meteor:
-    ~~~
-    sudo curl https://install.meteor.com/ | sh
-    ~~~
-    Install react, react-dom:
-    ~~~
-    meteor npm install --save react react-dom
-    ~~~
-    Install FlowRouter:
-    ~~~
-    meteor add ostrio:flow-router-extra
-    ~~~
-    Install react-mounter package:
-    ~~~
-    meteor npm install --save react-mounter
-    ~~~
-    Install react-beautiful-dnd for drag-and-drop of list items:
-    ~~~
-    meteor npm install react-beautiful-dnd --save
-    ~~~
-    Install reach-html-parser
-    ~~~
-    meteor npm install --save react-html-parser
+    ./install.sh
     ~~~
 ## Edit mup.js file
 1. Go to tournament/dev/tournament/.deploy directory, generate mup.js file
