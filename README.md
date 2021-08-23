@@ -18,20 +18,11 @@ Repo for pairwise comparison of passages answering a question.
 2. If use PuTTY, change IP, add ppk in connection -> SSH -> Auth -> browse, username: ubuntu
 
 ## Deploy Meteor app to AWS:
-1. Install docker:
-    ~~~ 
-    sudo apt-get update   # update repo
-    sudo apt install docker.io   # install docker
-    sudo gpasswd -a $USER docker
-    newgrp docker
-    
-    docker info   # to check that your user has the right permissions. Should give you a summary.
-    ~~~
-2. Upload tournament code:
+1. Clone tournament code:
     ~~~
     git clone https://github.com/chengxiluo/tournament.git # the respository needs to be public or with access token
     ~~~
-3. More installations (npm, mup, nodejs, meteor, react, flowrouter):
+2. Dependencies (npm, mup, nodejs, meteor, react, flowrouter):
 
     Go to project dir:
     ```
