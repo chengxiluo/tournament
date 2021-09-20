@@ -16,7 +16,7 @@ sudo npm install -g mup
 sudo curl https://install.meteor.com/ | sh
 
 # Meteor-dependencies
-meteor add kadira:flow-router
+meteor add ostrio:flow-router-extra
 meteor npm install --save react react-dom
 meteor npm install --save react-mounter
 meteor npm install --save react-beautiful-dnd
