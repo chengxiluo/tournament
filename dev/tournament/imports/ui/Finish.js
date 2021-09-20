@@ -42,39 +42,9 @@ class Finish extends Component {
 
         <div className="mx-auto text-center"
               style={{marginTop: '40px'}}>
-          If the completion code did not load, or something else went wrong, please contact Charles Clarke at claclark@gmail.com
+          If the completion code did not load, or something else went wrong, please contact Sasha Vtyurina at sasha.vtyurina@uwaterloo.ca
         </div>
 
-        <div className="mx-auto text-center"
-              style={{marginTop: '40px'}}>
-          <p>
-            We thank you for participating in this study.
-          </p>
-          
-          <p>
-            The objective of the study is to improve machine learning algorithms for answer selection for conversational assistants such as Amazon Alexa, Siri, etc.
-          </p>
-          
-          <p>
-            Over the course of the experiment, we recorded the answer choices you made for each answer. 
-          </p>
-          <p>
-            The data files will be stored under a numerical identifier (e.g., P7). We will release the dataset of the labels we collect from the study for the use in future research. 
-            No identifiable information or worker IDs will be released. The data files will be stored under numerical identifier. Once all the data are collected and analyzed for this project, 
-            we plan on sharing this information with the research community through seminars, conferences, presentations, and journal articles.
-          </p>
-          <p>
-            If after finishing the task you wish to withdraw the data you have provided, you can do so by contacting Charles L.A. Clarke at claclark@gmail.com. 
-            You can withdraw your data up until the dataset is publicly released on February 1, 2022.
-          </p>
-          <p>
-            This study has been reviewed and received ethics clearance through a University of Waterloo Research Ethics Committee (ORE#41912). 
-            If you have questions for the Committee, contact the Office of Research Ethics, at 1-519-888-4567 ext. 36005 or oreceo@uwaterloo.ca.
-          </p>
-          <p>
-            Should you have any questions about the study, or if you would like to obtain a copy of the findings made in this study, please contact Charles L.A. Clarke at claclark@gmail.com.
-          </p>
-          </div>
       </div>
     );
   }
