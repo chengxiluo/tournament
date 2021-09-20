@@ -20,12 +20,13 @@ class Comparison extends Component {
       question: '',
       questionID: '',
       leftAnswerText: '',
-      rightAnswerText: '',
       leftAnswerID: '',
-      rightAnswerID: '',
       ready: this.props.readyTracker,  // is MongoDB ready?
       showWarning: false,
       currentPair: '',
+      yesAnswerID: '',
+      noAnswerID: '',
+      partiallyAnswerID: ''
     }
   }
 
@@ -57,15 +58,15 @@ class Comparison extends Component {
 
       // contains docno (answerID), passage (answer text), topic (topicID)
       // console.log(currentPair);
-      var leftAnswer = Candidates.findOne({'docno': currentPair['left']})
-      var rightAnswer = Candidates.findOne({'docno': currentPair['right']});
+      var leftAnswer = Candidates.findOne({'docno': currentPair['passage']})
 
       var currentQuestion = currentTopic['question'];
       var currentQuestionID = currentTopic['topic'];
       var leftAnswerText = leftAnswer['passage'];
-      var rightAnswerText = rightAnswer['passage'];
       var leftAnswerID = leftAnswer['docno'];
-      var rightAnswerID = rightAnswer['docno'];
+      var yesAnswerID = "yes";
+      var noAnswerID = "no";
+      var partiallyAnswerID = "partially";
 
       // assert(currentQuestionID == rightAnswer['topicID']);
       // assert(currentQuestionID == leftAnswer['topicID']);
@@ -76,10 +77,11 @@ class Comparison extends Component {
         question: currentQuestion,
         questionID: currentQuestionID,
         leftAnswerText: leftAnswerText,
-        rightAnswerText: rightAnswerText,
         leftAnswerID: leftAnswerID,
-        rightAnswerID: rightAnswerID,
         currentPair: currentPair,
+        yesAnswerID: yesAnswerID,
+        noAnswerID: noAnswerID,
+        partiallyAnswerID: partiallyAnswerID
       });
 
     } else {
@@ -88,8 +90,9 @@ class Comparison extends Component {
   }
 
   checkForWarning() {
-    if ((this.state.selectedAnswerID == this.state.leftAnswerID) ||
-          (this.state.selectedAnswerID == this.state.rightAnswerID)) {
+    if ((this.state.selectedAnswerID == this.state.yesAnswerID) ||
+          (this.state.selectedAnswerID == this.state.noAnswerID) ||
+          (this.state.selectedAnswerID == this.state.partiallyAnswerID)) {
       this.setState({
         showWarning: false,
       });
@@ -141,21 +144,19 @@ class Comparison extends Component {
       Judgements.insert({
         topic: this.state.questionID,
         left: this.state.leftAnswerID,
-        right: this.state.rightAnswerID,
         selected: this.state.selectedAnswerID,
         workerID: this.props.workerID,
         expID: this.props.expID,
         timestamp: Date.now(),
         golden: isGolden,
-        //bestanswer: this.state.currentPair['bestanswer'],
-        //altanswer: this.state.currentPair['altanswer'],
+        passed: this.state.currentPair['bestanswer'] == this.state.selectedAnswerID,
+        bestanswer: this.state.currentPair['bestanswer'],
       });
 
     } else {
       Judgements.insert({
         topic: this.state.questionID,
         left: this.state.leftAnswerID,
-        right: this.state.rightAnswerID,
         selected: this.state.selectedAnswerID,
         workerID: this.props.workerID,
         expID: this.props.expID,
@@ -211,24 +212,6 @@ class Comparison extends Component {
     );
   }
 
-  renderInstruction() {
-    return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-12 instruction">
-            <h2>
-              Instructions:
-            </h2>
-            <ul>
-              <li> Click on the passage that answers the question better. </li>
-              <li> If both answers are similar, select the one with the least extraneous information.</li>
-              <li> If both answers are still similar, select the one with the best formatting.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   renderTopic() {
 
@@ -236,7 +219,7 @@ class Comparison extends Component {
       <div className="container-fluid">
         <div className="row justify-content-between">
           <div className="col-6 question">
-            Question: { this.state.question }
+            Does this passage answer the question: { this.state.question }
           </div>
           { this.renderBackButton() }
         </div>
@@ -253,44 +236,55 @@ class Comparison extends Component {
 
 
   renderAnswers() {
-    var candidateClass = "col-md-5 px-lg-5 py-3 answerCandidate";
-
-    var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";
-    var BSelected = (this.state.selectedAnswerID == this.state.rightAnswerID) ? " selectedCandidate " : "";
+    var candidateClass = "col-md-3 px-lg-5 py-3 mx-3 answerCandidate";
+    
+    var ASelected = (this.state.selectedAnswerID == this.state.leftAnswerID) ? " selectedCandidate " : "";    
+    var yesSelected = (this.state.selectedAnswerID == this.state.yesAnswerID) ? " selectedCandidate " : "";
+    var noSelected = (this.state.selectedAnswerID == this.state.noAnswerID) ? " selectedCandidate " : "";
+    var partiallySelected = (this.state.selectedAnswerID == this.state.partiallyAnswerID) ? " selectedCandidate " : "";
 	
 
 	const divStyle = {
 		overflowY: 'auto',
 		height: 400
 	};
-	
+
+
+
 	//console.log(this.state);
     //console.log(this.state.leftAnswerID);
     //console.log(this.state.rightAnswerID);
     return (
       <div className="container-fluid">
-	  
-        <div className="row mx-lg-n5 justify-content-between">
-          <div className={  ASelected + candidateClass }
-            name={ this.state.leftAnswerID }
-            onClick={ () => this.answerSelected(this.state.leftAnswerID) } 
-			style={divStyle}>
-
-			{ ReactHtmlParser (this.state.leftAnswerText) }
-
-		  </div>
+        <div className="row mx-lg-n5 justify-content-center" style = {{marginBottom: 15}}>
+          <div className={ "col-md-5 px-lg-5 py-3 passageText" }
+            name={ this.state.leftAnswerID } 
+            style={divStyle}>
+              { ReactHtmlParser (this.state.leftAnswerText) }
+          </div>
+        </div>
+          
+        <div className="row mx-lg-n5 justify-content-md-center-between">
+          <div className={  yesSelected + candidateClass  }
+            name={ this.state.yesAnswerID }
+            onClick={ () => this.answerSelected("yes") }>
+              Yes, the passage answers the question.
+          </div>
 		
-          <div className={candidateClass + BSelected }
-            name={ this.state.rightAnswerID }
-            onClick={ () => this.answerSelected(this.state.rightAnswerID) }
-			style = {divStyle}>
-			{ ReactHtmlParser (this.state.rightAnswerText) }
+          <div className={  candidateClass + partiallySelected }
+            name={ this.state.partiallyAnswerID }
+            onClick={ () => this.answerSelected(this.state.partiallyAnswerID) }>
+              Partially, the passage provides related information.
+          </div>
 
-		  
+          <div className={  candidateClass + noSelected }
+            name={ this.state.noAnswerID }
+            onClick={ () => this.answerSelected("no") }>
+              No, the passage does not answer the question.
           </div>
         </div>
       </div>
-
+      
     
 
 
@@ -302,7 +296,7 @@ class Comparison extends Component {
       <div className="container-fluid">
         <div className="row mx-lg-n5 justify-content-between">
           <div className="col-md-12 alert alert-danger warning text-center" role="alert">
-            Please select the better of the two passages
+            Please select one of three buttons.
           </div>
         </div>
       </div>
@@ -356,7 +350,6 @@ class Comparison extends Component {
     } else {
       return (
         <div>
-          { this.renderInstruction() }
           { this.renderTopic() }
           { this.renderAnswers() }
           { this.state.showWarning ? this.renderWarning() : null }

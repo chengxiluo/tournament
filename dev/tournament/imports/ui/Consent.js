@@ -44,8 +44,7 @@ class Consent extends Component {
 
           <div className="row consent">
           <p>
-            This study is conducted by Dr. Charles L.A. Clarke and Sasha Vtyurina, a PhD student,
-            at the School of Computer Science of the University of Waterloo, Canada.
+            This study is conducted by Prof. Charles Clarke at the School of Computer Science of the University of Waterloo, Canada.
           </p>
           </div>
 
@@ -57,42 +56,29 @@ class Consent extends Component {
           </div>
 
           <div className="row consent">
-            <p><b>Study details. </b>If you decide to participate, you will see a
-            question with two possible answers. You want to choose the answer that
-            is best for answering the question. For example, below you can see a
-            question “How was the Neverending Story film received?” The answer on
-            the left contains information about the critics’ response, while the
-            answer on the right talk about the plot of the film. Therefore the answer
-            on the left is better for suited for the question.</p>
-          </div>
-
-          <div className="row consent">
-           <img src="https://tournament2020.s3.us-east-2.amazonaws.com/example.png"
-           alt="Interface example" className="consentImage"/>
-
-          </div>
-
-
-          <div className="row consent">
-            <p>
-            This is not a test of your abilities. We want to know what <b>you </b>
-             think the best answer is. If you asked Siri or Alexa this question,
-             which answer would you prefer to hear? Below are the instructions
-             for selecting the best answer:
-            </p>
-
+            <p><b>Study details. </b>If you decide to participate, you will see a question and a short passage of text intended to answer the question. At the bottom are three buttons:</p>
 
             <br/>
             <ul>
-              <li>(1) Click on the answer that answers the question better. </li>
-              <li>(2) If both answers are similar, select the one with the least extraneous information. </li>
-              <li>(3) If both answers are similar, select the one with the best formatting (typos, punctuation, etc.) </li>
+              <li>Yes, the passage answers the question. </li>
+              <li>No, the passage does not answer the question. </li>
+              <li>Partially, the passage provides related information. </li>
             </ul>
-
+            
             <p>
-            Each HIT contains 13 questions and takes around 10-12 minutes to complete.
-            After completing all questions, you will be taken to a page with a confirmation code.
-            Use this code to complete the HIT on the Amazon Mechanical Turk platform.
+            Click <b>Yes</b> if the passage would be a reasonable answer from Siri, Google Assistant or Alexa in response to the question. It may contain extraneous information not related to the question. The passage need not be a grammatically correct response to the question.
+           </p>
+           
+            <p>
+            Click <b>Partially</b> if the passage contains information related to the question but does not directly answer it.
+            </p>
+            
+            <p>
+            Click <b>No</b> if the passage is not related to the question.
+            </p>
+            
+            <p>
+            Each HIT contains 14 questions and takes around 10-12 minutes to complete. After completing all questions, you will be taken to a page with a confirmation code. Use this code to complete the HIT on the Amazon Mechanical Turk platform.
             </p>
           </div>
 
@@ -104,7 +90,7 @@ class Consent extends Component {
             any point by clicking the “Exit task” button in the top right corner
             of the screen. “Exit task” button will take you to the screen with MTurk code.
             You will get remunerated ¢10 for starting the HIT, ¢10 for each completed
-            search task, and ¢60 for finishing the entire HIT.</p>
+            search task, and ¢50 for finishing the entire HIT.</p>
           </div>
 
           <div className="row consent">
@@ -112,13 +98,7 @@ class Consent extends Component {
           </div>
 
           <div className="row consent">
-            <p><b>Withdrawal.</b> Participation in this study is voluntary.
-            You may decline to interact with the interface or decline to answer
-            any questions in the questionnaire at any time you want. If after finishing
-            the task you wish to withdraw the data you have provided, you can do so by
-            contacting Charles L.A. Clarke at claclark@gmail.com or Sasha Vtyurina at
-            sasha.vtyurina@uwaterloo.ca. You may withdraw your data up until the
-            dataset is released publicly on May 15, 2020.</p>
+            <p><b>Withdrawal.</b> PParticipation in this study is voluntary. You may decline to interact with the interface or decline to answer any questions in the questionnaire at any time you want. If after finishing the task you wish to withdraw the data you have provided, you can do so by contacting Charles L.A. Clarke at claclark@gmail.com. You may withdraw your data up until the dataset is released publicly on January 31, 2022.</p>
           </div>
 
           <div className="row consent">
@@ -163,8 +143,7 @@ class Consent extends Component {
             <b>Questions.</b>
 
              Should you have any questions about the study, please contact
-             Charles L.A. Clarke (claclark@gmail.com) or Sasha Vtyurina
-             (sasha.vtyurina@uwaterloo.ca). Further, if you would like to
+             Charles L.A. Clarke (claclark@gmail.com). Further, if you would like to
              receive a copy of the results of this study, please contact either investigator.
              </p>
           </div>
