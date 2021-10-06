@@ -13,7 +13,7 @@ sudo n stable
 sudo npm install -g mup
 
 # Meteor
-sudo curl https://install.meteor.com/ | sh
+sudo curl --insecure https://install.meteor.com/ | sh
 
 # Meteor-dependencies
 meteor add ostrio:flow-router-extra
